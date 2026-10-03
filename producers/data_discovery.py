@@ -1,4 +1,5 @@
 import json
+
 import websocket
 
 # Counter batas penangkapan sampel
@@ -17,7 +18,9 @@ def on_message(ws: websocket.WebSocketApp, message: str) -> None:
     # Deserialisasi string JSON mentah dari WebSocket
     data = json.loads(message)
 
-    print(f"\n==================== [SAMPEL DATA RAW #{trade_count}] ====================")
+    print(
+        f"\n==================== [SAMPEL DATA RAW #{trade_count}] ===================="
+    )
     print(json.dumps(data, indent=2))
 
     # Jika target sampel terpenuhi, tutup koneksi secara elegan
@@ -31,9 +34,13 @@ def on_error(_ws: websocket.WebSocketApp, error: Exception) -> None:
     print(f"[ERROR] Terjadi kesalahan: {error}")
 
 
-def on_close(_ws: websocket.WebSocketApp, close_status_code: int, close_msg: str) -> None:
+def on_close(
+    _ws: websocket.WebSocketApp, close_status_code: int, close_msg: str
+) -> None:
     """Callback saat koneksi WebSocket ditutup."""
-    print(f"[INFO] Koneksi WebSocket ditutup (Kode: {close_status_code}, Pesan: '{close_msg}').")
+    print(
+        f"[INFO] Koneksi WebSocket ditutup (Kode: {close_status_code}, Pesan: '{close_msg}')."
+    )
 
 
 def on_open(_ws: websocket.WebSocketApp) -> None:

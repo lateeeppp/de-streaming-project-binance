@@ -1,8 +1,11 @@
 import json
 import logging
-from typing import Any, Dict
+from typing import Any
+
 import boto3
 import websocket
+from botocore.exceptions import BotoCoreError, ClientError
+
 from producers.config import (
     AWS_PROFILE,
     AWS_REGION,
@@ -23,10 +26,10 @@ session = boto3.Session(profile_name=AWS_PROFILE, region_name=AWS_REGION)
 kinesis_client = session.client("kinesis")
 
 
-def transform_raw_trade(raw_payload: Dict[str, Any]) -> Dict[str, Any]:
+def transform_raw_trade(raw_payload: dict[str, Any]) -> dict[str, Any]:
     """
     Mengubah payload mentah Binance menjadi format Data Contract standar.
-    
+
     Catatan Arsitektur:
     Pada Binance Combined Stream, payload dibungkus dalam key 'data'.
     Fungsi ini mengekstrak data transaksi dan menghitung trade_value_usd.
@@ -47,7 +50,8 @@ def transform_raw_trade(raw_payload: Dict[str, Any]) -> Dict[str, Any]:
         "event_time_ms": data["E"],
     }
 
-def send_to_kinesis(trade_record: Dict[str, Any]) -> None:
+
+def send_to_kinesis(trade_record: dict[str, Any]) -> None:
     """Mengirim record transaksi yang sudah terstandarisasi ke Amazon Kinesis."""
     try:
         payload_bytes = json.dumps(trade_record).encode("utf-8")
@@ -68,7 +72,7 @@ def send_to_kinesis(trade_record: Dict[str, Any]) -> None:
             f"Kinesis Ingested | {symbol:<8} | Val: ${val_usd:>10,.2f} | Shard: {shard_id}"
         )
 
-    except Exception as err:
+    except (ClientError, BotoCoreError) as err:
         logger.error(f"Gagal mengirim ke Kinesis: {err}")
 
 
@@ -78,7 +82,7 @@ def on_message(_ws: websocket.WebSocketApp, message: str) -> None:
         raw_data = json.loads(message)
         standardized_trade = transform_raw_trade(raw_data)
         send_to_kinesis(standardized_trade)
-    except Exception as err:
+    except (json.JSONDecodeError, KeyError, ValueError) as err:
         logger.error(f"Error memproses pesan transaksi: {err}")
 
 
@@ -91,7 +95,9 @@ def on_close(_ws: websocket.WebSocketApp, close_code: int, close_msg: str) -> No
 
 
 def on_open(_ws: websocket.WebSocketApp) -> None:
-    logger.info(f"Terhubung ke Binance Combined Streams! Mengalirkan ke Kinesis: '{KINESIS_STREAM_NAME}'...")
+    logger.info(
+        f"Terhubung ke Binance Combined Streams! Mengalirkan ke Kinesis: '{KINESIS_STREAM_NAME}'..."
+    )
 
 
 if __name__ == "__main__":

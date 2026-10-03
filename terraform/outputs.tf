@@ -7,3 +7,13 @@ output "kinesis_stream_arn" {
   description = "Amazon Resource Name (ARN) dari Kinesis Stream"
   value       = aws_kinesis_stream.crypto_stream.arn
 }
+
+output "dynamodb_table_name" {
+  description = "Nama DynamoDB Table untuk whale alerts"
+  value       = aws_dynamodb_table.whale_alerts.name
+}
+
+output "lambda_function_name" {
+  description = "Nama AWS Lambda function untuk whale detection"
+  value       = aws_lambda_function.whale_detector.function_name
+}

@@ -21,3 +21,21 @@ variable "aws_profile" {
   type        = string
   default     = "de-streaming-project-binance"
 }
+
+variable "telegram_bot_token" {
+  description = "Token bot Telegram dari @BotFather"
+  type        = string
+  sensitive   = true
+}
+
+variable "telegram_chat_id" {
+  description = "Chat ID akun Telegram dari @userinfobot"
+  type        = string
+  sensitive   = true
+}
+
+variable "whale_threshold_usd" {
+  description = "Ambang batas nominal (USD) untuk kategori Whale Trade"
+  type        = number
+  default     = 50000 # Kita set $50k agar saat pengujian lebih cepat menangkap paus!
+}
