@@ -3,7 +3,7 @@
 # Konfigurasi AWS
 AWS_REGION = "ap-southeast-3"
 AWS_PROFILE = "de-streaming-project-binance"
-KINESIS_STREAM_NAME = "crypto-trades-stream"
+KINESIS_STREAM_NAME = "de-streaming-project-binance-stream"
 
 # Konfigurasi Binance WebSocket
 # Kita dengarkan 3 simbol sekaligus: BTC, ETH, dan SOL

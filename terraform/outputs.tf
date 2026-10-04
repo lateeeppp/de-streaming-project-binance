@@ -17,3 +17,18 @@ output "lambda_function_name" {
   description = "Nama AWS Lambda function untuk whale detection"
   value       = aws_lambda_function.whale_detector.function_name
 }
+
+output "s3_lakehouse_bucket_name" {
+  description = "Nama S3 Bucket untuk Bronze Data Lake"
+  value       = aws_s3_bucket.lakehouse_bucket.bucket
+}
+
+output "glue_database_name" {
+  description = "Nama database AWS Glue Data Catalog"
+  value       = aws_glue_catalog_database.crypto_lakehouse_db.name
+}
+
+output "firehose_delivery_stream_name" {
+  description = "Nama Amazon Data Firehose Delivery Stream"
+  value       = aws_kinesis_firehose_delivery_stream.crypto_firehose.name
+}

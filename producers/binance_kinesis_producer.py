@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from typing import Any
 
 import boto3
@@ -101,12 +102,42 @@ def on_open(_ws: websocket.WebSocketApp) -> None:
 
 
 if __name__ == "__main__":
-    logger.info("Memulai Binance to Kinesis Streaming Producer...")
-    ws_app = websocket.WebSocketApp(
-        BINANCE_WS_URL,
-        on_open=on_open,
-        on_message=on_message,
-        on_error=on_error,
-        on_close=on_close,
-    )
-    ws_app.run_forever()
+    logger.info("Memulai Binance to Kinesis Streaming Producer (Resilient Mode)...")
+    logger.info("Tekan Ctrl+C kapan saja untuk menghentikan program dengan aman.")
+    reconnect_delay = 5  # detik jeda sebelum mencoba menyambung ulang
+
+    while True:
+        try:
+            ws_app = websocket.WebSocketApp(
+                BINANCE_WS_URL,
+                on_open=on_open,
+                on_message=on_message,
+                on_error=on_error,
+                on_close=on_close,
+            )
+            # Menjaga koneksi tetap hidup dengan heartbeat berkala:
+            # ping_interval=20: kirim ping setiap 20 detik
+            # ping_timeout=10: tunggu balasan pong maksimal 10 detik
+            ws_app.run_forever(ping_interval=20, ping_timeout=10)
+
+            logger.warning(
+                f"Koneksi terputus dari bursa. Menyambung kembali otomatis dalam {reconnect_delay} detik..."
+            )
+            time.sleep(reconnect_delay)
+
+        except KeyboardInterrupt:
+            logger.info(
+                "\nStreaming producer dihentikan secara manual (Ctrl+C). Sampai jumpa!"
+            )
+            break
+        except Exception as err:  # noqa: BLE001
+            logger.error(
+                f"Kesalahan tidak terduga: {err}. Mencoba ulang dalam {reconnect_delay} detik..."
+            )
+            try:
+                time.sleep(reconnect_delay)
+            except KeyboardInterrupt:
+                logger.info(
+                    "\nStreaming producer dihentikan secara manual (Ctrl+C). Sampai jumpa!"
+                )
+                break

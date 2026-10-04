@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "kinesis_stream_name" {
   description = "Nama stream Kinesis untuk menampung data transaksi kripto"
   type        = string
-  default     = "crypto-trades-stream"
+  default     = "de-streaming-project-binance-stream"
 }
 
 variable "kinesis_shard_count" {
@@ -37,5 +37,5 @@ variable "telegram_chat_id" {
 variable "whale_threshold_usd" {
   description = "Ambang batas nominal (USD) untuk kategori Whale Trade"
   type        = number
-  default     = 50000 # Kita set $50k agar saat pengujian lebih cepat menangkap paus!
+  default     = 50000 
 }

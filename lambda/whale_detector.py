@@ -15,7 +15,9 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 # Konfigurasi Environment Variables dari Terraform
-DYNAMODB_TABLE_NAME = os.environ.get("DYNAMODB_TABLE_NAME", "whale_alerts")
+DYNAMODB_TABLE_NAME = os.environ.get(
+    "DYNAMODB_TABLE_NAME", "de-streaming-project-binance-whale-alerts"
+)
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 WHALE_THRESHOLD_USD = float(os.environ.get("WHALE_THRESHOLD_USD", "100000.0"))
