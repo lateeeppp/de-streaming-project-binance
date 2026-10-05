@@ -32,3 +32,13 @@ output "firehose_delivery_stream_name" {
   description = "Nama Amazon Data Firehose Delivery Stream"
   value       = aws_kinesis_firehose_delivery_stream.crypto_firehose.name
 }
+
+output "athena_workgroup_name" {
+  description = "Nama Athena Workgroup untuk dbt dan query analytics"
+  value       = aws_athena_workgroup.lakehouse_workgroup.name
+}
+
+output "athena_query_results_s3_uri" {
+  description = "S3 URI untuk menampung hasil query Athena"
+  value       = "s3://${aws_s3_bucket.lakehouse_bucket.bucket}/athena-results/"
+}

@@ -434,3 +434,37 @@ resource "aws_kinesis_firehose_delivery_stream" "crypto_firehose" {
     ManagedBy   = "Terraform"
   }
 }
+
+# ==============================================================================
+# MILESTONE 4: DATA MODELING LAKEHOUSE (AMAZON ATHENA WORKGROUP)
+# ==============================================================================
+
+# 12. Amazon Athena Workgroup untuk dbt & Analytics
+resource "aws_athena_workgroup" "lakehouse_workgroup" {
+  name          = "de-streaming-project-binance-workgroup"
+  state         = "ENABLED"
+  force_destroy = true # Memudahkan teardown bersih saat destroy
+
+  configuration {
+    enforce_workgroup_configuration    = true
+    publish_cloudwatch_metrics_enabled = true
+
+    result_configuration {
+      output_location = "s3://${aws_s3_bucket.lakehouse_bucket.bucket}/athena-results/"
+
+      encryption_configuration {
+        encryption_option = "SSE_S3"
+      }
+    }
+
+    engine_version {
+      selected_engine_version = "Athena engine version 3"
+    }
+  }
+
+  tags = {
+    Project     = "de-streaming"
+    Environment = "dev"
+    ManagedBy   = "Terraform"
+  }
+}

@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: bronze_source
+    database: awsdatacatalog
+    schema: de_streaming_project_binance_db
+    tables:
+      - name: bronze_trades
+        description: "Data transaksi mentah dari Binance yang dialirkan oleh Firehose ke S3 Bronze"
