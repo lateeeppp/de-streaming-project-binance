@@ -428,6 +428,10 @@ resource "aws_kinesis_firehose_delivery_stream" "crypto_firehose" {
     }
   }
 
+  depends_on = [
+    aws_iam_role_policy_attachment.firehose_attach
+  ]
+
   tags = {
     Project     = "de-streaming"
     Environment = "dev"

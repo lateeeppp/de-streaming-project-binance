@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  # 1. Pengujian Lapisan Silver
+  - name: stg_trades
+    columns:
+      - name: trade_id
+        tests:
+          - unique
+          - not_null
+      - name: taker_side
+        tests:
+          - accepted_values:
+              values: ["BUY", "SELL"]
+
+  # 2. Pengujian Dimensi Koin
+  - name: dim_crypto_assets
+    columns:
+      - name: crypto_asset_sk
+        tests:
+          - unique
+          - not_null
+
+  # 3. Pengujian Dimensi Tanggal
+  - name: dim_date
+    columns:
+      - name: date_sk
+        tests:
+          - unique
+          - not_null
+
+  # 4. Pengujian Tabel Fakta
+  - name: fct_trades
+    columns:
+      - name: trade_id
+        tests:
+          - unique
+          - not_null
+      - name: crypto_asset_sk
+        tests:
+          - not_null
+          # Uji Integritas Foreign Key: Harus ada di dim_crypto_assets
+          - relationships:
+              to: ref('dim_crypto_assets')
+              field: crypto_asset_sk
+      - name: date_sk
+        tests:
+          - not_null
+          # Uji Integritas Foreign Key: Harus ada di dim_date
+          - relationships:
+              to: ref('dim_date')
+              field: date_sk
